@@ -10,36 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_01_005553) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_12_001645) do
   create_table "games", force: :cascade do |t|
     t.string "title", null: false
-    t.string "slug"
     t.string "release_date", null: false
     t.string "img_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["slug"], name: "index_games_on_slug", unique: true
+    t.integer "rawg_id", null: false
+    t.index ["rawg_id"], name: "index_games_on_rawg_id", unique: true
   end
 
-  create_table "genres", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "slug"
-    t.integer "games_count"
+  create_table "likes", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "likeable_type", null: false
+    t.integer "likeable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_genres_on_name", unique: true
-    t.index ["slug"], name: "index_genres_on_slug", unique: true
+    t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
+    t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
-  create_table "platforms", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "slug"
-    t.string "img_url"
-    t.integer "games_count"
+  create_table "owneds", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "ownable_type", null: false
+    t.integer "ownable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_platforms_on_name", unique: true
-    t.index ["slug"], name: "index_platforms_on_slug", unique: true
+    t.index ["ownable_type", "ownable_id"], name: "index_owneds_on_ownable"
+    t.index ["user_id"], name: "index_owneds_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -51,4 +50,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_005553) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
+
+  add_foreign_key "likes", "users"
+  add_foreign_key "owneds", "users"
 end
