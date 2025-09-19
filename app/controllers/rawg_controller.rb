@@ -1,7 +1,7 @@
 require "rest-client"
 
 class RawgController < ApplicationController
-  before_action :authenicate_request
+  before_action :authenticate_request
 
   def initialize
     @key = "key=#{Rails.application.credentials.rawg_key}"
@@ -24,5 +24,53 @@ class RawgController < ApplicationController
     modified_response["previous"] = "true" unless modified_response["previous"] == nil
 
     render json: modified_response, status: :ok
+  end
+
+  def get_all_genres
+    genres = fetch_all_genres
+    render json: genres, status: :ok
+  rescue StandardError => e
+    render json: { error: "Failed to fetch genres: #{e.message}" }, status: :internal_server_error
+  end
+
+  def get_all_platforms
+    platforms = fetch_all_platforms
+    render json: platforms, status: :ok
+  rescue StandardError => e
+    render json: { error: "Failed to fetch platforms: #{e.message}" }, status: :internal_server_error
+  end
+
+  private
+
+  def fetch_all_genres
+    url = "#{rawg_url}/genres#{key}"
+    genres = []
+
+    loop do
+      response = RestClient.get(url)
+      data = JSON.parse(response.body)
+      genres.concat(data["resutls"].map {
+        |genre| { name: genre["name"] }
+      })
+      url = data["next"]
+      break unless url
+    end
+    genres
+  end
+
+  def fetch_all_platforms
+    url = "#{rawg_url}/platforms#{key}"
+    platforms = []
+
+    loop do
+      response = RestClient.get(url)
+      data = JSON.parse(response.body)
+      platforms.concat(data["resutls"].map {
+        |platform| { name: platform["name"] }
+      })
+      url = data["next"]
+      break unless url
+    end
+    platforms
   end
 end

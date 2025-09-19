@@ -1,5 +1,5 @@
 class WebController < ApplicationController
-  before_action :authenicate_request
+  before_action :authenticate_request
 
   def bootstrap
     render json: UserBlueprint.render(@current_user), status: :ok

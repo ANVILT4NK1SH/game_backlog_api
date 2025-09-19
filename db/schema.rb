@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_12_001645) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_18_235436) do
+  create_table "backlogs", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "backloggable_type", null: false
+    t.integer "backloggable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["backloggable_type", "backloggable_id"], name: "index_backlogs_on_backloggable"
+    t.index ["user_id"], name: "index_backlogs_on_user_id"
+  end
+
   create_table "games", force: :cascade do |t|
     t.string "title", null: false
     t.string "release_date", null: false
@@ -51,6 +61,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_12_001645) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "backlogs", "users"
   add_foreign_key "likes", "users"
   add_foreign_key "owneds", "users"
 end
