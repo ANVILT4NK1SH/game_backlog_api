@@ -38,6 +38,7 @@ class RawgController < ApplicationController
     platforms = fetch_all_platforms
     render json: platforms, status: :ok
   rescue StandardError => e
+    Rails.logger.error("Error in get_all_platforms: #{e.message}\n#{e.backtrace.join("\n")}")
     render json: { error: "Failed to fetch platforms: #{e.message}" }, status: :internal_server_error
   end
 
@@ -69,18 +70,27 @@ class RawgController < ApplicationController
   end
 
   def fetch_all_platforms
-    url = "#{rawg_url}/platforms?#{key}"
+    url = "#{@rawg_url}/platforms?#{@key}"
     platforms = []
 
     loop do
+      Rails.logger.info("Fetching platforms from: #{url}")
       response = RestClient.get(url)
+      Rails.logger.info("RAWG API response: #{response.body}")
       data = JSON.parse(response.body)
-      platforms.concat(data["results"].map {
-        |platform| { id: platform["id"], name: platform["name"], slug: platform["slug"] }
-      })
+      platforms.concat(data["results"].map do |platform|
+        { id: platform["id"], name: platform["name"], slug: platform["slug"] }
+      end)
       url = data["next"]
+      Rails.logger.info("Next URL: #{url}")
       break unless url
     end
     platforms
+  rescue RestClient::Exception => e
+    Rails.logger.error("RestClient error: #{e.message}\nResponse: #{e.response&.body}")
+    raise
+  rescue JSON::ParserError => e
+    Rails.logger.error("JSON parsing error: #{e.message}\nResponse: #{response&.body}")
+    raise
   end
 end
