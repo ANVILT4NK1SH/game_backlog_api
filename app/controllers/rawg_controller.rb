@@ -30,6 +30,7 @@ class RawgController < ApplicationController
     genres = fetch_all_genres
     render json: genres, status: :ok
   rescue StandardError => e
+    Rails.logger.error("Error in get_all_genres: #{e.message}\n#{e.backtrace.join("\n")}")
     render json: { error: "Failed to fetch genres: #{e.message}" }, status: :internal_server_error
   end
 
@@ -43,30 +44,39 @@ class RawgController < ApplicationController
   private
 
   def fetch_all_genres
-    url = "#{rawg_url}/genres#{key}"
+    url = "#{@rawg_url}/genres?#{@key}"
     genres = []
 
     loop do
+      Rails.logger.info("Fetching genres from: #{url}")
       response = RestClient.get(url)
+      Rails.logger.info("RAWG API response: #{response.body}")
       data = JSON.parse(response.body)
-      genres.concat(data["resutls"].map {
-        |genre| { name: genre["name"] }
-      })
+      genres.concat(data["results"].map do |genre|
+        { id: genre["id"], name: genre["name"], slug: genre["slug"] }
+      end)
       url = data["next"]
+      Rails.logger.info("Next URL: #{url}")
       break unless url
     end
     genres
+  rescue RestClient::Exception => e
+    Rails.logger.error("RestClient error: #{e.message}\nResponse: #{e.response&.body}")
+    raise
+  rescue JSON::ParserError => e
+    Rails.logger.error("JSON parsing error: #{e.message}\nResponse: #{response&.body}")
+    raise
   end
 
   def fetch_all_platforms
-    url = "#{rawg_url}/platforms#{key}"
+    url = "#{rawg_url}/platforms?#{key}"
     platforms = []
 
     loop do
       response = RestClient.get(url)
       data = JSON.parse(response.body)
-      platforms.concat(data["resutls"].map {
-        |platform| { name: platform["name"] }
+      platforms.concat(data["results"].map {
+        |platform| { id: platform["id"], name: platform["name"], slug: platform["slug"] }
       })
       url = data["next"]
       break unless url
