@@ -1,7 +1,7 @@
 databases:
   - name: GamesBacklogApi
     databaseName: GamesBacklogApi
-    user: GamesBacklog
+    user: GamesBacklogApi
     plan: free
 
 services:
