@@ -178,6 +178,7 @@ GEM
     parser (3.3.9.0)
       ast (~> 2.4.1)
       racc
+    pg (1.6.2-x86_64-linux)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -345,6 +346,7 @@ DEPENDENCIES
   faker
   jwt
   kamal
+  pg
   puma (>= 5.0)
   rack-cors
   rails (~> 8.0.2)
