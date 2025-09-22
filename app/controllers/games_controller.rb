@@ -91,6 +91,33 @@ class GamesController < ApplicationController
     end
   end
 
+  def get_user_likes
+    if @current_user
+      likes = @current_user.likes.where(likeable_type: "Game").map(&:likeable)
+      render json: likes, status: :ok
+    else
+      render json: likes.errors, status: :not_found
+    end
+  end
+
+  def get_user_owned
+    if @current_user
+      owned = @current_user.owneds.where(ownable_type: "Game").map(&:ownable)
+      render json: owned, status: :ok
+    else
+      render json: owned.errors, status: :not_found
+    end
+  end
+
+  def get_user_backlog
+    if @current_user
+      backlog = @current_user.backlogs.where(backloggable_type: "Game").map(&:backloggable)
+      render json: backlog, staus: :ok
+    else
+      rander json: backlog.errors, status: :not_found
+    end
+  end
+
   def game_params
     params.permit(:title, :release_date, :img_url, :rawg_id)
   end

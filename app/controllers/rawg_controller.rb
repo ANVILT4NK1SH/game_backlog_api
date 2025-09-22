@@ -15,6 +15,12 @@ class RawgController < ApplicationController
     render json: response, status: :ok
   end
 
+  def get_game_by_id
+    response = RestClient.get("#{@rawg_url}/games/#{params[:rawg_id]}?#{@key}")
+
+    render json: response, status: :ok
+  end
+
   def filter_games
     # GET https://api.rawg.io/api/games?key=YOUR_API_KEY&dates=2019-09-01,2019-09-30&platforms=18,1,7&search=red-dead-redemtion
     response = RestClient.get("#{@rawg_url}/games?#{@key}#{params[:filterString]}")
@@ -41,8 +47,6 @@ class RawgController < ApplicationController
     Rails.logger.error("Error in get_all_platforms: #{e.message}\n#{e.backtrace.join("\n")}")
     render json: { error: "Failed to fetch platforms: #{e.message}" }, status: :internal_server_error
   end
-
-  private
 
   def fetch_all_genres
     url = "#{@rawg_url}/genres?#{@key}"
