@@ -3,7 +3,7 @@ primary_region = "ord"
 
 [build]
   builder = "paketobuildpacks/builder:base"
-  args = { RUBY_VERSION = "3.2.2" }
+  args = { BP_MRI_VERSION = "3.2.2" }
 
 [http_service]
   internal_port = 8080
