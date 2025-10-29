@@ -1,5 +1,5 @@
 app = "game-backlog-api"
-primary_region = "iad"
+primary_region = "ord"
 
 [build]
   builder = "paketobuildpacks/builder:base"
