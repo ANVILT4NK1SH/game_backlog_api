@@ -1,0 +1,19 @@
+app = "game-backlog-api"
+primary_region = "iad"
+
+[build]
+  builder = "paketobuildpacks/builder:base"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+[deploy]
+  release_command = "./bin/rails db:wait db:prepare"
+
+[env]
+  RAILS_ENV = "production"
+  RAILS_LOG_TO_STDOUT = "true"

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   post "/login", to: "sessions#create"
   resources :users, only: [ :create ]
 
+  # namespace "games" do
   post "/games/like", to: "games#like"
   post "/games/unlike", to: "games#unlike"
   post "/games/own", to: "games#own"
@@ -12,6 +13,7 @@ Rails.application.routes.draw do
   get "games/userlikes", to: "games#get_user_likes"
   get "games/userowned", to: "games#get_user_owned"
   get "games/userbacklog", to: "games#get_user_backlog"
+  # end
 
   get "/rawg/getAllGames", to: "rawg#get_all_games"
   post "/rawg/filterGames", to: "rawg#filter_games"
@@ -22,4 +24,6 @@ Rails.application.routes.draw do
   scope "/web" do
     get "bootstrap", to: "web#bootstrap"
   end
+
+  get "/up", to: proc { [ 200, {}, [ "OK" ] ] }
 end
