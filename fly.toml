@@ -3,7 +3,10 @@ primary_region = "ord"
 
 [build]
   builder = "paketobuildpacks/builder:base"
-  args = { BP_MRI_VERSION = "3.2.2" }
+  args = { 
+    "BP_MRI_VERSION" = "3.2.2",
+    "BUNDLE_WITHOUT" = "development:test"
+  }
 
 [http_service]
   internal_port = 8080
