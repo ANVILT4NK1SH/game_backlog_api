@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# bin/wait
+# Script to wait for the database to be available before migrating
+
+set -e
+
+# Wait for the database service to be ready
+echo "Waiting for the database to be ready..."
+until bin/rails db:status >/dev/null 2>&1
+do
+  echo "Database is not yet ready. Sleeping for 1 second..."
+  sleep 1
+done
+
+echo "Database is ready. Running migrations..."
+bin/rails db:prepare

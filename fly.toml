@@ -12,7 +12,7 @@ primary_region = "ord"
   min_machines_running = 1
 
 [deploy]
-  release_command = "./bin/rails db:wait db:prepare"
+  release_command = "./bin/wait"
 
 [env]
   RAILS_ENV = "production"
